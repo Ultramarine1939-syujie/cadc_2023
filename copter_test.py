@@ -1,6 +1,6 @@
 import functhion,time
 
-MISSION = "正方形航线"
+MISSION = ""
 DURATION = 5
 HEIGHT = 3
 VEL = 1
@@ -24,7 +24,7 @@ functhion.arm_and_takeoff(HEIGHT)
 
 #HEADING设定
 print("起飞完成\n设定朝向为: %s\n" % HEADING)
-functhion.condition_yaw(HEADING)
+#functhion.condition_yaw(HEADING)
 time.sleep(5)
 print("当前朝向为: %s\n" % functhion.vehicle.heading)
 
@@ -171,4 +171,4 @@ def test_vel():
     functhion.send_global_velocity(1,1,0,5)
     functhion.send_global_velocity(1,0,0,10)
 
-test_squad1(5)
+test_race()

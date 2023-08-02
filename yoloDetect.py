@@ -1,6 +1,9 @@
-import cv2
+import cv2,os
 import numpy as np
 
+current_directory = os.getcwd()
+names_path = os.path.join(current_directory,"model","coco.names") 
+onnx_path = os.path.join(current_directory,"model","model.onnx")
 
 class GlobalVariables:      # 全局变量类，用来管理和在文件间传递全局变量
     def __init__(self):
@@ -10,8 +13,8 @@ class GlobalVariables:      # 全局变量类，用来管理和在文件间传�
         self.frame_width = 640       # 窗口大小
         self.frame_height = 480
         self.ret = False             # 摄像头打开是否成功
-        self.show_img = False        # 是否显示图形化界面，用于调试，自己看设为True   #setable
-        self.send_img = True        # 是否向互联网发送图片                        ##setable
+        self.show_img = True        # 是否显示图形化界面，用于调试，自己看设为True   #setable
+        self.send_img = False        # 是否向互联网发送图片                        ##setable
         self.find_range = 50         # 检测边界（中心圆的半径）
 
 # 创建单例对象，全局变量
@@ -20,7 +23,7 @@ global_vars = GlobalVariables()
 
 class yolo_v2():
     def __init__(self, objThreshold=0.3, confThreshold=0.3, nmsThreshold=0.4):
-        with open('/home/syujie/drone/yoloproject/coco.names', 'rt') as f:
+        with open(names_path, 'rt') as f:
             self.classes = f.read().rstrip('\n').split(
                 '\n')  ###这个是在coco数据集上训练的模型做opencv部署的，如果你在自己的数据集上训练出的模型做opencv部署，那么需要修改self.classes
         self.stride = [16, 32]
@@ -30,7 +33,7 @@ class yolo_v2():
             dtype=np.float32).reshape(len(self.stride), self.anchor_num, 2)
         self.inpWidth = 352
         self.inpHeight = 352
-        self.net = cv2.dnn.readNet('/home/syujie/drone/yoloproject/model.onnx')
+        self.net = cv2.dnn.readNet(onnx_path)
         self.confThreshold = confThreshold
         self.nmsThreshold = nmsThreshold
         self.objThreshold = objThreshold
