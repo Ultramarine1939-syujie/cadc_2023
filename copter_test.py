@@ -31,10 +31,10 @@ print("当前朝向为: %s\n" % functhion.vehicle.heading)
 #任务设定
 print("当前任务目标为:%s\n 空速设定:%s\n 开始时间：%s秒后\n" % (MISSION, VEL, DURATION))
 functhion.vehicle.airspeed = VEL
-for i in range(DURATION,0,-1):
+for i in range(DURATION+1,0,-1):
     time.sleep(1)
     print("倒计时：%s" % i)
-    if i==0:
+    if i==1:
         print("开始测试")
 
 #测试函数
