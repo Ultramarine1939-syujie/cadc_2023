@@ -1,9 +1,10 @@
 import functhion,time
+from yoloDetect import global_vars
 
 DURATION = 5
-HEIGHT = 3
-VEL = 0.2
-HEADING = 170
+HEIGHT = global_vars.HEIGHT
+VEL = global_vars.VEL
+HEADING = global_vars.HEADING
 #HEADING = functhion.vehicle.heading
 
 print("下面播报飞机基本状态")
@@ -21,6 +22,25 @@ def time_count(num):
         print("当前角度为: %s:" %functhion.vehicle.heading)
         if i == 1:
             print("计时结束")
+
+def investigate():  #侦察函数
+    print("前往侦察区")
+    investigate_pos = [[55,4],[55,-4],
+                       [57.5,4],[57.5,-4],
+                       [60,4],[60,-4]]
+    
+    for pos in investigate_pos:
+        x,y = functhion.calculate_absolute_target(HEADING,pos[1],pos[2])
+        functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+        time_count(20)
+    print("侦察完成")
+
+def attack():   #打击函数
+    now_pos = [32.5,0]
+    print("前往打击区")
+    x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    time_count(34)
 
 #起飞
 print("初始化完成,%s秒后飞行器自动起飞,目标高度：%s" % (DURATION,HEIGHT))
