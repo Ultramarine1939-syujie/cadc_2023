@@ -22,13 +22,53 @@ def drone_init():
     print(" Mode: %s" % functhion.vehicle.mode.name)
     print(" DURATION: %s" % DURATION)
 
-def line(flag): #   0表示非vel  1表示vel
-    print("开始划线")
-    line_pos = [[15,0],[-15,0]]
-    while True:
-        for pos in line_pos:
-            x,y = functhion.calculate_absolute_target(HEADING,pos[1],pos[2])
-            functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+#测试函数
+#(length2/VEL)无法使用，敬请注意；相关函数已统一为DURATION
+def test_squad1(length):
+    print("正方形测试")
+    functhion.vehicle.groundspeed = 0.1
+    print(functhion.vehicle.groundspeed)
+    print("前进%sm" %length)
+    x,y = functhion.calculate_absolute_target(HEADING,-length,0)
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    for i in range(DURATION+1,0,-1):
+        time.sleep(1)
+        print("倒计时：%s" % i)
+        print(functhion.vehicle.groundspeed)
+        if i==1:
+            print("完成")
+
+    print("右行%sm" %length)
+    x,y = functhion.calculate_absolute_target(HEADING,-length,length)
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    for i in range(DURATION+1,0,-1):
+        time.sleep(1)
+        print("倒计时：%s" % i)
+        if i==1:
+            print("完成")
+
+    print("后退%sm" %length)
+    x,y = functhion.calculate_absolute_target(HEADING,0,length)
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    for i in range(DURATION+1,0,-1):
+        time.sleep(1)
+        print("倒计时：%s" % i)
+        if i==1:
+            print("完成")
+
+    print("左行%sm" %length)
+    x,y = functhion.calculate_absolute_target(HEADING,0,0)
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    for i in range(DURATION+1,0,-1):
+        time.sleep(1)
+        print("倒计时：%s" % i)
+        if i==1:
+            print("完成")
+
 
 #初始化
 drone_init()
@@ -39,4 +79,4 @@ time_count(DURATION)
 functhion.arm_and_takeoff(HEIGHT)
 
 #划线
-line()
+test_squad1(5)
