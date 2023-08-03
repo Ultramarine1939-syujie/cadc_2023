@@ -38,6 +38,7 @@ for i in range(DURATION+1,0,-1):
         print("开始测试")
 
 #测试函数
+#(length2/VEL)无法使用，敬请注意；相关函数已统一为DURATION
 def test_squad1(length):
     print("正方形测试")
     functhion.vehicle.groundspeed = 0.1
@@ -46,7 +47,7 @@ def test_squad1(length):
     x,y = functhion.calculate_absolute_target(HEADING,-length,0)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range(30+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         print(functhion.vehicle.groundspeed)
@@ -57,7 +58,7 @@ def test_squad1(length):
     x,y = functhion.calculate_absolute_target(HEADING,-length,length)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range(30+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
@@ -67,7 +68,7 @@ def test_squad1(length):
     x,y = functhion.calculate_absolute_target(HEADING,0,length)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range(30+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
@@ -77,7 +78,7 @@ def test_squad1(length):
     x,y = functhion.calculate_absolute_target(HEADING,0,0)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range(30+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
@@ -90,7 +91,7 @@ def test_squad2(length1,length2):
     x,y = functhion.calculate_absolute_target(HEADING,length1,0)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range((length1/VEL)+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
@@ -100,7 +101,7 @@ def test_squad2(length1,length2):
     x,y = functhion.calculate_absolute_target(HEADING,length1,length2)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range((length2/VEL)+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
@@ -110,7 +111,7 @@ def test_squad2(length1,length2):
     x,y = functhion.calculate_absolute_target(HEADING,0,length2)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range((length1/VEL)+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
@@ -120,7 +121,7 @@ def test_squad2(length1,length2):
     x,y = functhion.calculate_absolute_target(HEADING,0,0)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
-    for i in range((length2/VEL)+1,0,-1):
+    for i in range(DURATION+1,0,-1):
         time.sleep(1)
         print("倒计时：%s" % i)
         if i==1:
