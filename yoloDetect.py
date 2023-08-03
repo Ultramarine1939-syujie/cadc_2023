@@ -7,8 +7,10 @@ class GlobalVariables:      # 全局变量类，用来管理和在文件间传�
         self.location = []
         self.img_type = []
         self.finish_task = False            # 飞行任务是否完成
-        self.frame_width = 1280       # 窗口大小
+        self.frame_width = 720       # 窗口大小
         self.frame_height = 720
+        self.frame_width_detect = 640       # 检测窗口大小
+        self.frame_height_detect = 480
         self.ret = False             # 摄像头打开是否成功
         
         #setable_var

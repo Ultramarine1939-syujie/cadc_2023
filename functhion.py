@@ -6,10 +6,11 @@ import time, math
 from dronekit import connect, VehicleMode, LocationGlobalRelative, LocationGlobal
 from pymavlink import mavutil
 
-connection_string = "127.0.0.1:14550"
 #connection_string = "/dev/ttyUSB0"
-vehicle = connect(connection_string, wait_ready=False)
 #vehicle = connect(connection_string, wait_ready=True,baud =921600)
+connection_string = "127.0.0.1:14550"
+vehicle = connect(connection_string, wait_ready=False)
+
 print('Connecting to vehicle on: %s' % connection_string)
 
 def do_set_servo(pwm, duration):

@@ -64,9 +64,9 @@ def detect_yolov2():
             detect_img = model.postprocess(detect_img, outputs)  # 处理图片里面的物品并且画框框
             img = cv2.resize(detect_img, (640, 480))            # 将处理完的图片重新变回我们自己的图片，方便我们看
             # 给傻子画的辅助线，防止看不懂程序还不会调试
-            cv2.line(img, (0, int(global_vars.frame_height / 2)), (global_vars.frame_width, int(global_vars.frame_height / 2)), (0, 0, 0), 2)
-            cv2.line(img, (int(global_vars.frame_width / 2), 0), (int(global_vars.frame_width / 2), global_vars.frame_height), (0, 0, 0), 2)
-            cv2.circle(img, (int(global_vars.frame_width / 2), int(global_vars.frame_height / 2)), global_vars.find_range * 2, (0, 255, 0), 2)
+            cv2.line(img, (0, int(global_vars.frame_height_detect / 2)), (global_vars.frame_width_detect, int(global_vars.frame_height_detect / 2)), (0, 0, 0), 2)
+            cv2.line(img, (int(global_vars.frame_width_detect / 2), 0), (int(global_vars.frame_width_detect / 2), global_vars.frame_height_detect), (0, 0, 0), 2)
+            cv2.circle(img, (int(global_vars.frame_width_detect / 2), int(global_vars.frame_height_detect / 2)), global_vars.find_range * 2, (0, 255, 0), 2)
             if global_vars.send_img:
                 _, img_encoded = cv2.imencode('.jpg', img)  # 发送图片
                 c.sendall(len(img_encoded).to_bytes(4, byteorder='big'))
