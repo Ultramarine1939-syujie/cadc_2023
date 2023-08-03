@@ -13,7 +13,7 @@ def test_squard():
     print("正方形测试")
 
     print("前进5m")
-    x,y = functhion.calculate_absolute_target(HEADING,1,0)
+    x,y = functhion.calculate_absolute_target(HEADING,5,0)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(DURATION+1,0,-1):
@@ -23,7 +23,7 @@ def test_squard():
             print("完成")
 
     print("右行5m")
-    x,y = functhion.calculate_absolute_target(HEADING,1,1)
+    x,y = functhion.calculate_absolute_target(HEADING,5,5)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(DURATION+1,0,-1):
@@ -33,7 +33,7 @@ def test_squard():
             print("完成")
 
     print("后退5m")
-    x,y = functhion.calculate_absolute_target(HEADING,0,1)
+    x,y = functhion.calculate_absolute_target(HEADING,0,5)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(DURATION+1,0,-1):
@@ -75,6 +75,7 @@ functhion.vehicle.airspeed = VEL
 for i in range(DURATION,0,-1):
     time.sleep(1)
     print("倒计时：%s" % i)
+    print(functhion.vehicle.groundspeed)
     if i==0:
         print("开始测试")
 
