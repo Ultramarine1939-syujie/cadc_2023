@@ -1,10 +1,10 @@
 import functhion,time
+from yoloDetect import global_vars
 
-MISSION = ""
 DURATION = 5
-HEIGHT = 3
-VEL = 0.2
-HEADING = 170
+HEIGHT = global_vars.HEIGHT
+VEL = global_vars.VEL
+HEADING = global_vars.HEADING
 #HEADING = functhion.vehicle.heading
 
 def time_count(num):
