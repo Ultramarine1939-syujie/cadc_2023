@@ -4,8 +4,8 @@ MISSION = ""
 DURATION = 5
 HEIGHT = 3
 VEL = 0.2
-HEADING = 170
-#HEADING = functhion.vehicle.heading
+#HEADING = 170
+HEADING = functhion.vehicle.heading
 
 print("下面播报飞机基本状态")
 print(" %s" % functhion.vehicle.heading)
