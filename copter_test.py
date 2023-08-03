@@ -127,11 +127,15 @@ def test_squad2(length1,length2):
             print("完成")
 
 def test_race():
+    '''
+    x轴负数向前、正数向后
+    y轴负数向左、正数向右
+    飞行角度目前无法确定
+    '''
     print("比赛场地测量")
-
     print("前往打击区")
-#    x,y = functhion.calculate_absolute_target(HEADING,30,0)
-    functhion.goto_position_target_local_ned(-30, 0, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(HEADING,30,0)
+    functhion.goto_position_target_local_ned(-30, 0, -HEIGHT)    #向前行驶
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(30+1,0,-1):
         time.sleep(1)
@@ -142,8 +146,8 @@ def test_race():
     time.sleep(5)
 
     print("前往侦察区")
-#    x,y = functhion.calculate_absolute_target(HEADING,55,-4)
-    functhion.goto_position_target_local_ned(55, -4, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(HEADING,55,-4)
+    functhion.goto_position_target_local_ned(55, -4, -HEIGHT)    #向左行驶
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(30+1,0,-1):
         time.sleep(1)
@@ -154,7 +158,7 @@ def test_race():
     time.sleep(5)
 
     print("开始侦察")
- #   x,y = functhion.calculate_absolute_target(HEADING,60,4)
+    x,y = functhion.calculate_absolute_target(HEADING,60,4)
     functhion.goto_position_target_local_ned(60, 4, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(20+1,0,-1):
