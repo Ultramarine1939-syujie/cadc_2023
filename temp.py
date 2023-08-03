@@ -1,10 +1,25 @@
-import errno
+import argparse
+import socket
+import threading
+import time
+import cv2
+from dronekit import VehicleMode
 import functhion
-import cv2,argparse,socket
-import time,threading
 from yoloDetect import yolo_v2, global_vars
 
+#if_searched = False
+
+def search_point():
+    global if_searched
+    while not if_searched:
+        if 61 in global_vars.img_type:   #change to 61
+            if_searched = True
+    return if_searched  
+        
+
 def detect_yolov2():
+    HOST = "127.0.0.1"
+    PORT = 5000
     cap = cv2.VideoCapture(0)    # 调用默认摄像头
     cap.set(3, global_vars.frame_width)
     cap.set(4, global_vars.frame_height)
@@ -14,35 +29,18 @@ def detect_yolov2():
     parser.add_argument('--confThreshold', default=0.3, type=float, help='class confidence')
     parser.add_argument('--nmsThreshold', default=0.4, type=float, help='nms iou thresh')
     args = parser.parse_args()
-
-    connected = False
-    while True:
-        for port in global_vars.PORT:
-            try:
-                if global_vars.send_img:  # 这样用就对了
-                    s = socket.socket()
-                    s.bind((global_vars.HOST, port))
-                    print(f"成功绑定到端口 {port}")
-                    # 连接成功后的操作
-                    s.listen(1)
-                    c, addr = s.accept()
-                    print(f"成功与客户端 {addr} 建立连接")
-                connected = True
-                #  可以在这里添加额外的处理逻辑
-                break  # 如果端口绑定成功，跳出循环
-            except socket.error as e:
-                if e.errno == socket.EADDRINUSE:
-                    print(f"端口 {port} 被占用，尝试下一个端口...")
-            time.sleep(3)  # 等待3秒后重试
-        if connected:
-            break
-
     while not global_vars.ret:
         print("wait for detect")
         global_vars.ret, img = cap.read()  # 读取摄像头
         time.sleep(1)          # 一秒一次
         pass
-
+    if global_vars.send_img:               # 这样用就对了
+        s = socket.socket()
+        s.bind((HOST, PORT))
+        s.listen(5)
+        c, addr = s.accept()
+        print('Got connection from', addr)
+        pass
     # 加载模型，在另一个文件里，要是报错了，大概率是你没有把这个文件和coco.names以及model.onnx文件放到一个文件夹里面
     model = yolo_v2(objThreshold=args.objThreshold, confThreshold=args.confThreshold,
                                nmsThreshold=args.nmsThreshold)  # load model
@@ -53,10 +51,6 @@ def detect_yolov2():
     try:
         while not global_vars.finish_task:
             global_vars.ret, img = cap.read()
-            if global_vars.send_img:
-                _, img_encoded = cv2.imencode('.jpg', img)  # 发送原始图片
-                c.sendall(len(img_encoded).to_bytes(4, byteorder='big'))
-                c.sendall(img_encoded.tobytes())
             # 等待键盘事件
             key = cv2.waitKey(40)  # 25帧-1000/40
             if key & 0xff == ord('q'):
@@ -94,96 +88,18 @@ def detect_yolov2():
             print("服务器已关闭！")
         print("视觉识别退出。")
 
-def time_count(num):
-    for i in range(num+1,0,-1):
-        time.sleep(1)
-        print("倒计时：%s" % i)
-        print("当前速度为：%s" %functhion.vehicle.groundspeed)
-        print("当前角度为: %s:" %functhion.vehicle.heading)
-        if i == 1:
-            print("计时结束")
 
-def attack():
-    now_pos = [32.5,0]
-    print("前往打击区")
-    x,y = functhion.calculate_absolute_target(global_vars.HEADING,now_pos[0],now_pos[1])
-    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
-    time_count(34)
-    print("开始打击")
-
-    while not global_vars.finish_task:                      # 执行设定的任务
-        if 61 in global_vars.img_type:                      # 如果要识别的白桶在已经识别到的物品中, 桶子61,人0
-            reach = False                       # 还未到达中心
-            obj_indx = global_vars.img_type.index(61)       # 找到识别的白桶的在已知物中的下标
-            if global_vars.location[obj_indx][0] > global_vars.frame_width / 2 + global_vars.find_range:  # x  坐标在机头后面
-                now_pos[0] += 0.1
-                print(global_vars.location[obj_indx], "前进", end= ' ')
-                pass
-            elif global_vars.location[obj_indx][0] < global_vars.frame_width / 2 - global_vars.find_range:  # x 坐标在机头前面
-                now_pos[0] -= 0.1
-                print(global_vars.location[obj_indx], "后退", end= ' ')
-                pass
-            else:
-                reach = True
-                print("前后位置已经达到")
-            if global_vars.location[obj_indx][1] > global_vars.frame_height / 2 + global_vars.find_range:  # x
-                now_pos[1] += 0.1
-                print( "右移")
-                pass
-            elif global_vars.location[obj_indx][1] < global_vars.frame_height / 2 - global_vars.find_range:
-                now_pos[1] -= 0.1
-                print( "左移")
-                pass
-            elif reach:
-                functhion.do_set_servo(1000, 5)
-                print(global_vars.location[obj_indx], "抵达中心")
-                break;
-            global_vars.location = []
-            global_vars.img_type = []
-            x,y = functhion.calculate_absolute_target(global_vars.HEADING,now_pos[0],now_pos[1])
-            print("当前位置为：", now_pos,end=" ")
-            functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
-            print("当前角度为: %s:" %functhion.vehicle.heading)
-            time.sleep(1)
-            pass
-        else:
-            print("未检索到目标，开始扩大搜索范围")
-            scan_flag = False
-            scan_length = 0.1
-            scan_pos = [[now_pos[0]-scan_length,now_pos[1]-scan_length],
-                        [now_pos[0]+scan_length,now_pos[1]-scan_length],
-                        [now_pos[0]+scan_length,now_pos[1]+scan_length],
-                        [now_pos[0]-scan_length,now_pos[1]+scan_length]]
-            while not scan_flag:
-                for pos in scan_pos:
-                    x,y = functhion.calculate_absolute_target(global_vars.HEADING,pos[0],pos[1])
-                    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
-                    if (61 in global_vars.img_type):
-                        break;
-
-        time.sleep(1)
-        pass
-    print("打击完成")
-    time_count(3)
-
-def investigate():  #侦察函数
-    print("前往侦察区")
-    investigate_pos = [[55,4],[55,-4],
-                       [57.5,4],[57.5,-4],
-                       [60,4],[60,-4]]
-    
-    for pos in investigate_pos:
-        x,y = functhion.calculate_absolute_target(global_vars.HEADING,pos[1],pos[2])
-        functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
-        time_count(20)
-    print("侦察完成")
-    
-def main():
-    functhion.do_set_servo(2000,5)
-    print("关闭舵机")
-    functhion.vehicle.airspeed = global_vars.VEL
-    print("速度设定：%s" % global_vars.VEL)
-
+if __name__ == '__main__':
+   # global if_searched
+    DURATION = 5
+    HEADING = functhion.vehicle.heading
+    HEIGHT = 3
+    now_pos = [32.5,0]         # 侦察区域
+    functhion.do_set_servo(2000, 5)     # 关闭舵机
+    print("close servo")
+    print("当前朝向为： %s\n" % HEADING)
+    #functhion.condition_yaw(HEADING)
+    functhion.vehicle.airspeed = 1
     frame_g = threading.Thread(target=detect_yolov2)
     frame_g.start()                             # 开始识别
     print("start camera")
@@ -191,10 +107,132 @@ def main():
         print("等待摄像头初始化...")
         time.sleep(1)
         pass
+    print("camera begining---")
+    print("-----START UP-----")
+    functhion.arm_and_takeoff(HEIGHT)                # 起飞，高度3m
+    time.sleep(DURATION)                        # 等待
+    
+    #advance stage 1
+    print("前进5m")
+    x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    print("抵达打击目标点")
+    print("start to detect")
+    
+    while not global_vars.finish_task:                      # 执行设定的任务
+        if 61 in global_vars.img_type:                      # 如果要识别的白桶在已经识别到的物品中, 桶子61,人0
+            reach = False                       # 还未到达中心
+            obj_indx = global_vars.img_type.index(61)       # 找到识别的白桶的在已知物中的下标
+            if global_vars.location[obj_indx][0] > global_vars.frame_width / 2 + global_vars.find_range:  # x  坐标在机头后面
+                now_pos[0] += 0.1
+                print(global_vars.location[obj_indx], "forward!", end= ' ')
+                pass
+            elif global_vars.location[obj_indx][0] < global_vars.frame_width / 2 - global_vars.find_range:  # x 坐标在机头前面
+                now_pos[0] -= 0.1
+                print(global_vars.location[obj_indx], "back!", end= ' ')
+                pass
+            else:
+                reach = True
+                print("前后位置已经达到")
+                break
+            if global_vars.location[obj_indx][1] > global_vars.frame_height / 2 + global_vars.find_range:  # x
+                now_pos[1] += 0.1
+                print( "turn right!")
+                pass
+            elif global_vars.location[obj_indx][1] < global_vars.frame_height / 2 - global_vars.find_range:
+                now_pos[1] -= 0.1
+                print( "turn left!")
+                pass
+            elif reach:
+                functhion.do_set_servo(2000, 5)
+                print(global_vars.location[obj_indx], "reach the center! ")
+                global_vars.finish_task = True
+                break
+            global_vars.location = []
+            global_vars.img_type = []
+            x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
+            print("当前位置为：", now_pos,end=" ")
+            functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+            print("当前角度为: %s:" %functhion.vehicle.heading)
+            time.sleep(1)
+            pass
+        else :
+            print("no target, start circle...........")
+            flag = False
+            while not flag:  #weijiancedaomubiao
+                
+                for i in range(4):
+                    if i==0:
+                        print("forward.....10cm")
+                        functhion.goto_position_target_local_ned(0.1, 0, -HEIGHT)
+                        time.sleep(1)
+                        if search_point():
+                            flag = True
+                            break
+                    if i==1:
+                        print("backward.....20cm")
+                        functhion.goto_position_target_local_ned(-0.2, 0, -HEIGHT)
+                        time.sleep(1)
+                        if search_point():
+                            flag = True
+                            break
+                        
+                    if i==2:
+                        print("left.....10cm")
+                        functhion.goto_position_target_local_ned(0.1, 0, -HEIGHT)
+                        time.sleep(1)
+                        functhion.goto_position_target_local_ned(0, -0.1, -HEIGHT)
+                        time.sleep(1)
+                        if search_point():
+                            flag = True
+                            break
+                    if i==3:
+                        print("riight.....10cm")
+                        functhion.goto_position_target_local_ned(0, 0.2, -HEIGHT)
+                        time.sleep(1)
+                        if search_point():
+                            flag = True
+                            functhion.goto_position_target_local_ned(0, -0.1, -HEIGHT)
+                            time.sleep()
+                            break
+                break
+            
+        time.sleep(1)
+        pass
+    
+    print("打击完成")
+    # functhion.send_global_velocity(2,0,0,10)    #抵达侦察目标点
+    # print("抵达侦察目标点")
+    # functhion.send_body_ned_velocity(0,-2,0,10)    #抵达侦察区域左下角
 
-    functhion.arm_and_takeoff(global_vars.HEIGHT)
-    attack()
-    investigate()
-    functhion.vehicle_return()
+    print("前往侦察区")
+    x,y = functhion.calculate_absolute_target(HEADING,55,-4)
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    for i in range(30+1,0,-1):
+        time.sleep(1)
+        print("倒计时：%s" % i)
+        if i==1:
+            print("完成")
+    print("到达侦察点")
+    time.sleep(5)
 
-main()
+    print("开始侦察")
+    x,y = functhion.calculate_absolute_target(HEADING,60,4)
+    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    print("当前角度为: %s:" %functhion.vehicle.heading)
+    for i in range(10+1,0,-1):
+        time.sleep(1)
+        print("倒计时：%s" % i)
+        if i==1:
+            print("完成")
+    print("侦察完成")
+    time.sleep(5)
+
+    print("---RETURN-----")
+    functhion.vehicle.mode = VehicleMode("RTL")
+    time.sleep(DURATION)
+    print("-----VEHICLE CLOSE-----")
+    functhion.vehicle.close()
+
