@@ -34,6 +34,7 @@ def investigate():  #侦察函数
         functhion.goto_position_target_local_ned(x, y, -HEIGHT)
         time_count(20)
     print("侦察完成")
+    time.sleep(1)
 
 def attack():   #打击函数
     now_pos = [32.5,0]
@@ -41,6 +42,8 @@ def attack():   #打击函数
     x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     time_count(34)
+    print("打击完毕")
+    time.sleep(1)
 
 #起飞
 print("初始化完成,%s秒后飞行器自动起飞,目标高度：%s" % (DURATION,HEIGHT))
@@ -50,6 +53,8 @@ functhion.arm_and_takeoff(HEIGHT)
 #测量
 print("起飞完成，%s秒后飞行器开始测量场地" %DURATION)
 time_count(DURATION)
+attack()
+investigate()
 
 #返回
 print("测量完成，%s秒后飞行器返回" %DURATION)
