@@ -7,7 +7,7 @@ functhion       飞行控制函数
 
 main_syujie     主函数
 
-test_takeoff    起飞测试
+test_takeoff    起飞测试    \n
 test_line       飞线测试（定点+定速）
 test_squad      方块测试
 test_survey     场地测试（定点）
