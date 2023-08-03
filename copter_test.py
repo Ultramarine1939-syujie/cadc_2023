@@ -4,8 +4,8 @@ MISSION = ""
 DURATION = 5
 HEIGHT = 3
 VEL = 1
-HEADING = 100
-#HEADING = functhion.vehicle.heading
+#HEADING = 100
+HEADING = functhion.vehicle.heading
 
 print("下面播报飞机基本状态")
 print(" %s" % functhion.vehicle.heading)
@@ -42,7 +42,7 @@ def test_squad1(length):
     print("正方形测试")
 
     print("前进%sm" %length)
-    x,y = functhion.calculate_absolute_target(HEADING,length,0)
+    x,y = functhion.calculate_absolute_target(HEADING,-length,0)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(DURATION+1,0,-1):
@@ -52,7 +52,7 @@ def test_squad1(length):
             print("完成")
 
     print("右行%sm" %length)
-    x,y = functhion.calculate_absolute_target(HEADING,length,length)
+    x,y = functhion.calculate_absolute_target(HEADING,-length,length)
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     for i in range(DURATION+1,0,-1):
@@ -171,4 +171,4 @@ def test_vel():
     functhion.send_global_velocity(1,1,0,5)
     functhion.send_global_velocity(1,0,0,10)
 
-test_race()
+test_squad1(1)

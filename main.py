@@ -9,7 +9,7 @@ from yoloDetect import yolo_v2, global_vars
 
 
 def detect_yolov2():
-    HOST = "127.0.0.1"
+    HOST = "192.168.43.19"
     PORT = 5000
     cap = cv2.VideoCapture(0)    # 调用默认摄像头
     cap.set(3, global_vars.frame_width)
