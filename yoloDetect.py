@@ -1,4 +1,4 @@
-import cv2
+import cv2,os
 import numpy as np
 from  functhion import vehicle
 
@@ -27,10 +27,14 @@ class GlobalVariables:      # 全局变量类，用来管理和在文件间传�
 # 创建单例对象，全局变量
 global_vars = GlobalVariables()
 
+def get_model_path(name):
+    current_directory = os.getcwd()
+    names_path = os.path.join(current_directory,"model",name) 
+    return names_path
 
 class yolo_v2():
     def __init__(self, objThreshold=0.3, confThreshold=0.3, nmsThreshold=0.4):
-        with open('coco.names', 'rt') as f:
+        with open(get_model_path('coco.names'), 'rt') as f:
             self.classes = f.read().rstrip('\n').split(
                 '\n')  ###这个是在coco数据集上训练的模型做opencv部署的，如果你在自己的数据集上训练出的模型做opencv部署，那么需要修改self.classes
         self.stride = [16, 32]
@@ -40,7 +44,7 @@ class yolo_v2():
             dtype=np.float32).reshape(len(self.stride), self.anchor_num, 2)
         self.inpWidth = 352
         self.inpHeight = 352
-        self.net = cv2.dnn.readNet('model.onnx')
+        self.net = cv2.dnn.readNet(get_model_path('model.onnx'))
         self.confThreshold = confThreshold
         self.nmsThreshold = nmsThreshold
         self.objThreshold = objThreshold
