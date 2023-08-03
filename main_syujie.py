@@ -1,20 +1,11 @@
+import errno
+
 import functhion
 import cv2,argparse,socket
 import time,threading
 from yoloDetect import yolo_v2, global_vars
 
-HOST = "127.0.0.1"
-PORT = 5000
-CAM = 0
-DETECT = 61
-VEL = 1
-HEIGHT = 3
-HEADING = functhion.vehicle.heading
-
-
 def detect_yolov2():
-    HOST = "127.0.0.1"
-    PORT = 5000
     cap = cv2.VideoCapture(0)    # 调用默认摄像头
     cap.set(3, global_vars.frame_width)
     cap.set(4, global_vars.frame_height)
@@ -24,18 +15,35 @@ def detect_yolov2():
     parser.add_argument('--confThreshold', default=0.3, type=float, help='class confidence')
     parser.add_argument('--nmsThreshold', default=0.4, type=float, help='nms iou thresh')
     args = parser.parse_args()
+
+    connected = False
+    while True:
+        for port in global_vars.PORT:
+            try:
+                if global_vars.send_img:  # 这样用就对了
+                    s = socket.socket()
+                    s.bind((global_vars.HOST, port))
+                    print(f"成功绑定到端口 {port}")
+                    # 连接成功后的操作
+                    s.listen(1)
+                    c, addr = s.accept()
+                    print(f"成功与客户端 {addr} 建立连接")
+                connected = True
+                #  可以在这里添加额外的处理逻辑
+                break  # 如果端口绑定成功，跳出循环
+            except socket.error as e:
+                if e.errno == socket.EADDRINUSE:
+                    print(f"端口 {port} 被占用，尝试下一个端口...")
+            time.sleep(3)  # 等待3秒后重试
+        if connected:
+            break
+
     while not global_vars.ret:
         print("wait for detect")
         global_vars.ret, img = cap.read()  # 读取摄像头
         time.sleep(1)          # 一秒一次
         pass
-    if global_vars.send_img:               # 这样用就对了
-        s = socket.socket()
-        s.bind((HOST, PORT))
-        s.listen(5)
-        c, addr = s.accept()
-        print('Got connection from', addr)
-        pass
+
     # 加载模型，在另一个文件里，要是报错了，大概率是你没有把这个文件和coco.names以及model.onnx文件放到一个文件夹里面
     model = yolo_v2(objThreshold=args.objThreshold, confThreshold=args.confThreshold,
                                nmsThreshold=args.nmsThreshold)  # load model
@@ -46,6 +54,10 @@ def detect_yolov2():
     try:
         while not global_vars.finish_task:
             global_vars.ret, img = cap.read()
+            if global_vars.send_img:
+                _, img_encoded = cv2.imencode('.jpg', img)  # 发送原始图片
+                c.sendall(len(img_encoded).to_bytes(4, byteorder='big'))
+                c.sendall(img_encoded.tobytes())
             # 等待键盘事件
             key = cv2.waitKey(40)  # 25帧-1000/40
             if key & 0xff == ord('q'):
@@ -92,30 +104,30 @@ def time_count(num):
 
 def investigate():  #侦察函数
     print("前往侦察区")
-    x,y = functhion.calculate_absolute_target(HEADING,55,-4)
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,55,-4)
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     time_count(20)
 
-    x,y = functhion.calculate_absolute_target(HEADING,55,4)
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,55,4)
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     print("当前角度为: %s:" %functhion.vehicle.heading)
     time_count(20)
 
-    x,y = functhion.calculate_absolute_target(HEADING,57.5,4)
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,57.5,4)
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     time_count(5)
 
-    x,y = functhion.calculate_absolute_target(HEADING,57.5,-4)
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,57.5,-4)
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     time_count(20)
 
-    x,y = functhion.calculate_absolute_target(HEADING,60,-4)
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,60,-4)
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     time_count(5)
 
-    x,y = functhion.calculate_absolute_target(HEADING,60,4)
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,60,4)
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     time_count(20)
 
     print("侦察完成")
@@ -123,8 +135,8 @@ def investigate():  #侦察函数
 def attack():
     now_pos = [32.5,0]
     print("前往打击区")
-    x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
-    functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+    x,y = functhion.calculate_absolute_target(global_vars.HEADING,now_pos[0],now_pos[1])
+    functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
     time_count(34)
     print("开始打击")
 
@@ -157,9 +169,9 @@ def attack():
                 break;
             global_vars.location = []
             global_vars.img_type = []
-            x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
+            x,y = functhion.calculate_absolute_target(global_vars.HEADING,now_pos[0],now_pos[1])
             print("当前位置为：", now_pos,end=" ")
-            functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+            functhion.goto_position_target_local_ned(x, y, -global_vars.HEIGHT)
             print("当前角度为: %s:" %functhion.vehicle.heading)
             time.sleep(1)
             pass
@@ -169,8 +181,8 @@ def attack():
 def main():
     functhion.do_set_servo(2000,5)
     print("关闭舵机")
-    functhion.vehicle.airspeed = VEL
-    print("速度设定：%s" %VEL)
+    functhion.vehicle.airspeed = global_vars.VEL
+    print("速度设定：%s" % global_vars.VEL)
 
     frame_g = threading.Thread(target=detect_yolov2)
     frame_g.start()                             # 开始识别
@@ -180,7 +192,7 @@ def main():
         time.sleep(1)
         pass
 
-    functhion.arm_and_takeoff(HEIGHT)
+    functhion.arm_and_takeoff(global_vars.HEIGHT)
     attack()
     investigate()
     functhion.vehicle_return()
