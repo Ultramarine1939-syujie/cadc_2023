@@ -10,16 +10,18 @@ class GlobalVariables:      # 全局变量类，用来管理和在文件间传�
         self.frame_width = 1280       # 窗口大小
         self.frame_height = 720
         self.ret = False             # 摄像头打开是否成功
-        self.show_img = False        # 是否显示图形化界面，用于调试，自己看设为True   #setable
-        self.send_img = True        # 是否向互联网发送图片                        ##setable
-        self.find_range = 50         # 检测边界（中心圆的半径）
-        self.HOST = "127.0.0.1"
-        self.PORT = [5000, 5025, 5050]
-        self.CAM = 0
-        self.DETECT = 61
-        self.VEL = 1
-        self.HEIGHT = 3
-        self.HEADING = vehicle.heading
+        
+        #setable_var
+        self.show_img = False        # 是否显示图形化界面，用于调试，自己看设为True   
+        self.send_img = True        # 是否向互联网发送图片                        
+        self.find_range = 50         # 检测边界（中心圆的半径）    
+        self.HOST = "127.0.0.1"       #host地址
+        self.PORT = [5000, 5025, 5050]    #端口组
+        self.CAM = 0        #相机编号
+        self.DETECT = 61    #识别物体
+        self.VEL = 1        #飞行速度
+        self.HEIGHT = 3        #飞行高度
+        self.HEADING = vehicle.heading    #飞行朝向
 
 
 # 创建单例对象，全局变量
