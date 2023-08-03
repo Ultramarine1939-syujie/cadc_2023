@@ -30,7 +30,7 @@ def investigate():  #侦察函数
                        [60,4],[60,-4]]
     
     for pos in investigate_pos:
-        x,y = functhion.calculate_absolute_target(HEADING,pos[1],pos[2])
+        x,y = functhion.calculate_absolute_target(HEADING,pos[0],pos[1])
         functhion.goto_position_target_local_ned(x, y, -HEIGHT)
         time_count(20)
     print("侦察完成")
@@ -41,7 +41,7 @@ def attack():   #打击函数
     print("前往打击区")
     x,y = functhion.calculate_absolute_target(HEADING,now_pos[0],now_pos[1])
     functhion.goto_position_target_local_ned(x, y, -HEIGHT)
-    time_count(34)
+    time_count(15)
     print("打击完毕")
     time.sleep(1)
 

@@ -78,5 +78,10 @@ print("初始化完成,%s秒后飞行器自动起飞,目标高度：%s" % (DURAT
 time_count(DURATION)
 functhion.arm_and_takeoff(HEIGHT)
 
-#划线
+#画方
 test_squad1(5)
+
+#返回
+print("测量完成，%s秒后飞行器返回" %DURATION)
+time_count(DURATION)
+functhion.vehicle_return()

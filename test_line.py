@@ -22,20 +22,35 @@ def drone_init():
     print(" Mode: %s" % functhion.vehicle.mode.name)
     print(" DURATION: %s" % DURATION)
 
+'''
+vel模式有bug,位置默认为正北
+'''
+
 def line(flag,time=None): #   0表示非vel  1表示vel
     print("开始划线")
     line_pos = [[15,0],[-15,0]]
     now_pos = [0,0]
     if flag==0:
         while True:
+            i=1
             for pos in line_pos:
-                x,y = functhion.calculate_absolute_target(HEADING,pos[1],pos[2])
+                x,y = functhion.calculate_absolute_target(HEADING,pos[0],pos[1])
                 functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+                time_count(15)
+            i=i+1
+            if i==2:
+                break;
+    
     elif flag==1 and time != None:
         while True:
+            i=1
             for pos in line_pos:
                 now_pos = [pos[0]-now_pos[0],pos[1]-now_pos[1]]
                 functhion.send_ned_velocity(now_pos[0]/time,now_pos[1]/time,0,time)
+            i=i+1
+            if i==2:
+                break;
+    
     elif flag==1 and time ==None:
         print("时间未设置")
  
@@ -49,4 +64,4 @@ time_count(DURATION)
 functhion.arm_and_takeoff(HEIGHT)
 
 #划线
-line(0)
+line(1,15)
