@@ -1,4 +1,5 @@
 import functhion,time
+
 DURATION = 5
 HEIGHT = 3
 VEL = 0.2
@@ -31,26 +32,20 @@ def line(flag,time=None): #   0表示非vel  1表示vel
     line_pos = [[15,0],[-15,0]]
     now_pos = [0,0]
     if flag==0:
-        while True:
-            i=1
-            for pos in line_pos:
-                x,y = functhion.calculate_absolute_target(HEADING,pos[0],pos[1])
-                #x,y = pos[0],pos[1]
-                functhion.goto_position_target_local_ned(x, y, -HEIGHT)
-                time_count(15)
-            i=i+1
-            if i==2:
-                break;
+        for pos in line_pos:
+            functhion.goto_position_target_local_ned(15,0,-HEIGHT)
+            x,y = functhion.calculate_absolute_target(HEADING,pos[0],pos[1])
+            #x,y = pos[0],pos[1]
+            functhion.goto_position_target_local_ned(x, y, -HEIGHT)
+            time_count(15)
+        
     
     elif flag==1 and time != None:
-        while True:
-            i=1
-            for pos in line_pos:
-                now_pos = [pos[0]-now_pos[0],pos[1]-now_pos[1]]
-                functhion.send_ned_velocity(now_pos[0]/time,now_pos[1]/time,0,time)
-            i=i+1
-            if i==2:
-                break;
+        for pos in line_pos:
+            target_stage = [pos[0]-now_pos[0],pos[1]-now_pos[1]]
+            now_pos = pos
+            functhion.send_ned_velocity(target_stage[0]/time,target_stage[1]/time,0,time)
+            
     
     elif flag==1 and time ==None:
         print("时间未设置")
