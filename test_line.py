@@ -35,6 +35,7 @@ def line(flag,time=None): #   0表示非vel  1表示vel
             i=1
             for pos in line_pos:
                 x,y = functhion.calculate_absolute_target(HEADING,pos[0],pos[1])
+                #x,y = pos[0],pos[1]
                 functhion.goto_position_target_local_ned(x, y, -HEIGHT)
                 time_count(15)
             i=i+1
@@ -64,4 +65,4 @@ time_count(DURATION)
 functhion.arm_and_takeoff(HEIGHT)
 
 #划线
-line(1,15)
+line(0)
