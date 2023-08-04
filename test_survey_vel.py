@@ -34,11 +34,12 @@ def drone_init():
 def investigate_vel(now_pos,time_set):
     print("前往侦察区")
     investigate_pos = [[55,4],  [55,-4],
-                       [57.5,4],[57.5,-4],
+                       [57.5,-4],[57.5,4],
                        [60,4],  [60,-4]]
     for pos in investigate_pos:
-        now_pos = [pos[0]-now_pos[0],pos[1]-now_pos[1]]
-        functhion.send_ned_velocity(now_pos[0]/time_set,now_pos[1]/time_set,0,time_set)
+        target_stage  = [pos[0]-now_pos[0],pos[1]-now_pos[1]]
+        now_pos = pos
+        functhion.send_ned_velocity(target_stage[0]/time_set,target_stage[1]/time_set,0,time_set)
     print("侦察完成")
     time.sleep(1)
     return now_pos
@@ -46,8 +47,9 @@ def investigate_vel(now_pos,time_set):
 def attack_vel(now_pos,time_set):
     print("前往打击区")
     attack_pos = [32.5,0]
-    now_pos = [attack_pos[0]-now_pos[0],attack_pos[1]-now_pos[1]]
-    functhion.send_ned_velocity(now_pos[0]/time_set,now_pos[1]/time_set,0,time_set)
+    target_stage = [attack_pos[0]-now_pos[0],attack_pos[1]-now_pos[1]]
+    now_pos = attack_pos
+    functhion.send_ned_velocity(target_stage[0]/time_set,target_stage[1]/time_set,0,time_set)
     time.sleep(1)
     print("打击完成")
     return now_pos
