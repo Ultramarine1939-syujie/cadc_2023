@@ -443,7 +443,7 @@ DOWN = 0.5
 # Square path using velocity
 print("SQUARE path using SET_POSITION_TARGET_LOCAL_NED and velocity parameters")
 
-print("Yaw 180 absolute (North")
+print("Yaw 0 absolute (North")
 condition_yaw(0)
 
 print("Velocity South & up")
@@ -451,7 +451,7 @@ send_ned_velocity(NORTH,0,0,DURATION)
 send_ned_velocity(0,0,0,1)
 
 
-print("Yaw 270 absolute (North)")
+print("Yaw 0 absolute (North)")
 condition_yaw(0)
 
 print("Velocity East & down")
@@ -467,54 +467,13 @@ send_ned_velocity(SOUTH,0,0,DURATION)
 send_ned_velocity(0,0,0,1)
 
 
-print("Yaw 90 absolute (West)")
+print("Yaw 0 absolute (West)")
 condition_yaw(0)
 
 print("Velocity West")
 send_ned_velocity(0,WEST,0,DURATION)
 send_global_velocity(0,0,0,1)
 
-
-
-
-'''
-print("SQUARE path using SET_POSITION_TARGET_LOCAL_NED and velocity parameters")
-
-print("Yaw 180 absolute (North")
-condition_yaw(0)
-
-print("Velocity South & up")
-slide_velocity(2,0,0)
-time.sleep(10)
-send_ned_velocity(0,0,0,1)
-
-
-print("Yaw 270 absolute (North)")
-condition_yaw(0)
-
-print("Velocity East & down")
-slide_velocity(0,2,0)
-time.sleep(10)
-send_ned_velocity(0,0,0,1)
-
-
-print("Yaw 0 absolute (South)")
-condition_yaw(0)
-
-print("Velocity South")
-slide_velocity(-2,0,0)
-time.sleep(10)
-send_ned_velocity(0,0,0,1)
-
-
-print("Yaw 90 absolute (West)")
-condition_yaw(0)
-
-print("Velocity West")
-slide_velocity(0,-2,0)
-time.sleep(10)
-send_global_velocity(0,0,0,1)
-'''
 
 """
 The example is completing. LAND at current location.
