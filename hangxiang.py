@@ -408,7 +408,7 @@ print("-----START UP-----")
 arm_and_takeoff(5)
 
 print("SQUARE path using SET_POSITION_TARGET_LOCAL_NED and position parameters")
-DURATION = 20 #Set duration for each segment.
+DURATION = 10 #Set duration for each segment.
 
 """
 Fly the vehicle in a SQUARE path using velocity vectors (the underlying code calls the 
