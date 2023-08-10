@@ -51,7 +51,7 @@ while True:
 
     # 解码帧数据
     frame = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
-    if (img_num % 2) == 0:
+    if img_num == 0:
         # 在窗口中显示帧
         cv2.imshow('Raw Frame', frame)
     else:

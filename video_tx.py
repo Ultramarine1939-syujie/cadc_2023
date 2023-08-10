@@ -1,5 +1,5 @@
-import cv2,socket,argparse,time,threading
-import functhion
+import cv2,argparse,socket
+import time,threading
 from yoloDetect import yolo_v2, global_vars
 
 def detect_yolov2():
@@ -22,6 +22,7 @@ def detect_yolov2():
                     s.bind((global_vars.HOST, port))
                     print(f"成功绑定到端口 {port}")
                     # 连接成功后的操作
+                    print("正在等待客户端连接ing")
                     s.listen(1)
                     c, addr = s.accept()
                     print(f"成功与客户端 {addr} 建立连接")
@@ -64,9 +65,9 @@ def detect_yolov2():
             detect_img = model.postprocess(detect_img, outputs)  # 处理图片里面的物品并且画框框
             img = cv2.resize(detect_img, (640, 480))            # 将处理完的图片重新变回我们自己的图片，方便我们看
             # 给傻子画的辅助线，防止看不懂程序还不会调试
-            cv2.line(img, (0, int(global_vars.frame_height_detect / 2)), (global_vars.frame_width_detect, int(global_vars.frame_height_detect / 2)), (0, 0, 0), 2)
-            cv2.line(img, (int(global_vars.frame_width_detect / 2), 0), (int(global_vars.frame_width_detect / 2), global_vars.frame_height_detect), (0, 0, 0), 2)
-            cv2.circle(img, (int(global_vars.frame_width_detect / 2), int(global_vars.frame_height_detect / 2)), global_vars.find_range * 2, (0, 255, 0), 2)
+            cv2.line(img, (0, int(global_vars.frame_height / 2)), (global_vars.frame_width, int(global_vars.frame_height / 2)), (0, 0, 0), 2)
+            cv2.line(img, (int(global_vars.frame_width / 2), 0), (int(global_vars.frame_width / 2), global_vars.frame_height), (0, 0, 0), 2)
+            cv2.circle(img, (int(global_vars.frame_width / 2), int(global_vars.frame_height / 2)), global_vars.find_range * 2, (0, 255, 0), 2)
             if global_vars.send_img:
                 _, img_encoded = cv2.imencode('.jpg', img)  # 发送图片
                 c.sendall(len(img_encoded).to_bytes(4, byteorder='big'))
@@ -92,10 +93,10 @@ def detect_yolov2():
             print("服务器已关闭！")
         print("视觉识别退出。")
 
-frame_g = threading.Thread(target=detect_yolov2)
-frame_g.start()                             # 开始识别
-print("start camera")
-while not global_vars.ret:  # 等待摄像头初始化
-    print("等待摄像头初始化...")
-    time.sleep(1)
-    pass
+
+def main():
+    frame_g = threading.Thread(target=detect_yolov2)
+    frame_g.start()                             # 开始识别
+
+
+main()

@@ -197,4 +197,23 @@ def main():
     investigate()
     functhion.vehicle_return()
 
-main()
+def main2():
+    # functhion.do_set_servo(2000,5)
+    # print("关闭舵机")
+    # functhion.vehicle.airspeed = global_vars.VEL
+    # print("速度设定：%s" % global_vars.VEL)
+    # 
+    frame_g = threading.Thread(target=detect_yolov2)
+    frame_g.start()                             # 开始识别
+    # print("start camera")
+    # while not global_vars.ret:  # 等待摄像头初始化
+    #     print("等待摄像头初始化...")
+    #     time.sleep(1)
+    #     pass
+    # 
+    # functhion.arm_and_takeoff(global_vars.HEIGHT)
+    # attack()
+    # investigate()
+    # functhion.vehicle_return()
+
+main2()
