@@ -5,13 +5,71 @@ from __future__ import print_function
 import time, math
 from dronekit import connect, VehicleMode, LocationGlobalRelative, LocationGlobal
 from pymavlink import mavutil
+from yoloDetect import global_vars
 
-connection_string = "/dev/ttyACM0"
-vehicle = connect(connection_string, wait_ready=True,baud =115200)
-#connection_string = "127.0.0.1:14550"
-#vehicle = connect(connection_string, wait_ready=False)
+# connection_string = "/dev/ttyACM0"
+# vehicle = connect(connection_string, wait_ready=True,baud =115200)
+connection_string = "127.0.0.1:14550"
+vehicle = connect(connection_string, wait_ready=False)
 
 print('Connecting to vehicle on: %s' % connection_string)
+
+# 修改后的运动函数，当找到物体后立刻退出循环
+def run_with_detect(forward,right,down,duration):
+    msg = vehicle.message_factory.set_position_target_local_ned_encode(
+        0,  # time_boot_ms (not used)
+        0, 0,  # target system, target component
+        mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,  # frame 
+        0b010111000111,  # type_mask (only speeds enabled)
+        # 统共16位，前四位默认置0，后12位用作主掩码（后续同理）
+        0,0,0,
+        forward,  # X velocity in BODY frame in m/s
+        right,  # Y velocity in BODY frame in m/s
+        down,  # Z velocity in BODY frame in m/s
+        0, 0, 0,  # afx, afy, afz acceleration (not supported yet, ignored in GCS_Mavlink)
+        0, 0)  # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
+    # send command to vehicle
+        # send command to vehicle on 1 Hz cycle
+    for x in range(0,duration):
+        vehicle.send_mavlink(msg)
+        if global_vars.found_obj:
+            break
+        time.sleep(1)
+
+def set_speed_body_offset(forward,right,down,duration):
+    msg = vehicle.message_factory.set_position_target_local_ned_encode(
+        0,  # time_boot_ms (not used)
+        0, 0,  # target system, target component
+        mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,  # frame 
+        0b010111000111,  # type_mask (only speeds enabled)
+        # 统共16位，前四位默认置0，后12位用作主掩码（后续同理）
+        0,0,0,
+        forward,  # X velocity in BODY frame in m/s
+        right,  # Y velocity in BODY frame in m/s
+        down,  # Z velocity in BODY frame in m/s
+        0, 0, 0,  # afx, afy, afz acceleration (not supported yet, ignored in GCS_Mavlink)
+        0, 0)  # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
+    # send command to vehicle
+        # send command to vehicle on 1 Hz cycle
+    for x in range(0,duration):
+        vehicle.send_mavlink(msg)
+        time.sleep(1)
+    
+def set_speed_on_time(forward,right,down,duration):
+    msg = vehicle.message_factory.set_position_target_local_ned_encode(
+        0,  # time_boot_ms (not used)
+        0, 0,  # target system, target component
+        mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,  # frame 
+        0b010111000111,  # type_mask (only speeds enabled)
+        # 统共16位，前四位默认置0，后12位用作主掩码（后续同理）
+        0,0,0,
+        forward,  # X velocity in BODY frame in m/s
+        right,  # Y velocity in BODY frame in m/s
+        down,  # Z velocity in BODY frame in m/s
+        0, 0, 0,  # afx, afy, afz acceleration (not supported yet, ignored in GCS_Mavlink)
+        0, 0)  # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
+    # send command to vehicle
+    vehicle.send_mavlink(msg)
 
 def do_set_servo(pwm, duration):
     msg = vehicle.message_factory.command_long_encode(
