@@ -3,40 +3,7 @@ import socket
 import time
 import cv2,os
 import numpy as np
-from  functhion import vehicle
-
-class GlobalVariables:      # 全局变量类，用来管理和在文件间传递全局变量
-    def __init__(self):
-        self.location = []
-        self.img_type = []
-        self.finish_task = False            # 飞行任务是否完成
-        self.frame_width = 720       # 窗口大小
-        self.frame_height = 720
-        self.frame_width_detect = 640       # 检测窗口大小
-        self.frame_height_detect = 480
-        self.center = (self.frame_width_detect / 2 , self.frame_height_detect / 2)
-        self.ret = False             # 摄像头打开是否成功
-        
-        #setable_var
-        self.show_img = False        # 是否显示图形化界面，用于调试，自己看设为True   
-        self.send_img = True        # 是否向互联网发送图片                        
-        self.find_range = 50         # 检测边界（中心圆的半径）    
-        self.HOST = "192.168.0.100"       #host地址
-        self.PORT = [5000, 5025, 5050]    #端口组
-        self.CAM = 0        #相机编号
-
-        self.DETECT = 61    #识别物体
-        self.VEL = 1        #飞行速度
-        self.HEIGHT = 3        #飞行高度
-        self.HEADING = vehicle.heading    #飞行朝向
-        self.run = False
-        self.found_obj = False
-
-
-
-
-# 创建单例对象，全局变量
-global_vars = GlobalVariables()
+from global_class import global_vars
 
 
 def detect_yolov2():
@@ -94,7 +61,7 @@ def detect_yolov2():
                 c.sendall(len(img_encoded).to_bytes(4, byteorder='big'))
                 c.sendall(img_encoded.tobytes())
             # 等待键盘事件
-            key = cv2.waitKey(40)  # 25帧-1000/40
+            key = cv2.waitKey(5)  # 25帧-1000/40
             detect_img = cv2.resize(img, (352, 352))     # 这个参数不能改，这个模型只能识别大小为352*352的图片，因此图片要变形一下
             outputs = model.detect(detect_img)  # 检测图片里面的物品
             detect_img = model.postprocess(detect_img, outputs)  # 处理图片里面的物品并且画框框

@@ -5,12 +5,12 @@ from __future__ import print_function
 import time, math
 from dronekit import connect, VehicleMode, LocationGlobalRelative, LocationGlobal
 from pymavlink import mavutil
-from yoloDetect import global_vars
+from global_class import global_vars
 
-# connection_string = "/dev/ttyACM0"
-# vehicle = connect(connection_string, wait_ready=True,baud =115200)
-connection_string = "127.0.0.1:14550"
-vehicle = connect(connection_string, wait_ready=False)
+connection_string = "/dev/ttyACM0"
+vehicle = connect(connection_string, wait_ready=True,baud =115200)
+# connection_string = "127.0.0.1:14550"
+# vehicle = connect(connection_string, wait_ready=False)
 
 print('Connecting to vehicle on: %s' % connection_string)
 

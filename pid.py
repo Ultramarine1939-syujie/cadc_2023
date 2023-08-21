@@ -17,6 +17,6 @@ class PID():
         self.pos_integral =  np.clip(self.pos_integral, -5.0, 5.0)
         control_signal = np.multiply(self.Kp, error) + np.multiply(self.Ki, self.pos_integral) + np.multiply(self.Kd, derivative)
         self.pos_previous_error = error
-        return control_signal,error
+        return control_signal / 100.0 ,error
 
 
