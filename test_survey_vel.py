@@ -119,7 +119,7 @@ if __name__ == '__main__':
     now_pos = go_for_attack(now_pos,3)
     if attack():
         now_pos = investigate_vel(now_pos,20)
-
+    
 
     #返回
     print("测量完成，%s秒后飞行器返回" %DURATION)
