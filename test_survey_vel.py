@@ -1,9 +1,8 @@
 import threading
-from functhion import *
 import time
-from yoloDetect import global_vars,detect_yolov2
+from yoloDetect import *
 from pid import PID
-
+from  functhion import *
 
 '''syujie
 有bug,默认飞正北，别再问了
@@ -66,29 +65,33 @@ def attack():
     detect_num = 0
     start_time = time.time()
     while not (fire or global_vars.finish_task):
-        if start_time - time.time() > 30:   # 30秒超时推出
+        time.sleep(0.05)
+        if  time.time() - start_time > 5:   # 30秒超时
             print("未识别到目标超时，跳过投弹返航")
             break
         if 61 in global_vars.img_type:                      # 如果要识别的白桶在已经识别到的物品中, 桶子61,人0
             start_time = time.time()
             obj_indx = global_vars.img_type.index(61)       # 找到识别的白桶的在已知物中的下标
-            location = global_vars.location[obj_indx]
-            control_signal,error = pid.calculate_pos_pid(global_vars.center,location)
-            if max(error) < 50:
-                detect_num += 1
-                print("抵达中心,detect_num = ",detect_num)
-                control_signal = [0,0]
-                if detect_num > 40:
-                    do_set_servo(1000, 5)
-                    print("投放水瓶！")
-                    fire = True
-            else:
-                detect_num = 0
-            set_speed_on_time(control_signal[0],control_signal[1],0,1)
-            print("当前控制速度",control_signal)
+            if obj_indx < len(global_vars.location):                
+                location = global_vars.location[obj_indx]
+                control_signal,error = pid.calculate_pos_pid(global_vars.center,location)
+                print("当前控制速度",control_signal)
+                # print("当前坐标：",location)
+                # print("当前误差：",error)
+                if abs(error[0]) < 50 and abs(error[1]) < 50:
+                    detect_num += 1
+                    print("抵达中心,detect_num = ",detect_num)
+                    control_signal = [0,0]
+                    if detect_num > 50:
+                        detect_num = 0
+                        do_set_servo(1000, 5)
+                        print("投放水瓶！")
+                        fire = True
+                else:
+                    detect_num = 0
+                set_speed_on_time(-control_signal[0],-control_signal[1],0,1)
             global_vars.location = []
             global_vars.img_type = []
-            time.sleep(0.1)
             pass
         pass
     print("打击完成")
@@ -119,10 +122,11 @@ if __name__ == '__main__':
     now_pos = go_for_attack(now_pos,3)
     if attack():
         now_pos = investigate_vel(now_pos,20)
-    
+
 
     #返回
     print("测量完成，%s秒后飞行器返回" %DURATION)
     time_count(DURATION)
     vehicle_return()
     global_vars.run = False
+    global_vars.finish_task = True
