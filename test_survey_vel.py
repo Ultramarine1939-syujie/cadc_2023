@@ -69,9 +69,12 @@ def attack():
         if  time.time() - start_time > 5:   # 30秒超时
             print("未识别到目标超时，跳过投弹返航")
             break
-        if 61 in global_vars.img_type:                      # 如果要识别的白桶在已经识别到的物品中, 桶子61,人0
+        if 61 in global_vars.img_type or 29 in global_vars.img_type:                      # 如果要识别的白桶在已经识别到的物品中, 桶子61,人0
             start_time = time.time()
-            obj_indx = global_vars.img_type.index(61)       # 找到识别的白桶的在已知物中的下标
+            if 61 in global_vars.img_type:
+                obj_indx = global_vars.img_type.index(61)       # 找到识别的白桶的在已知物中的下标
+            else:
+                obj_indx = global_vars.img_type.index(29)       # 找到识别的白桶的在已知物中的下标
             if obj_indx < len(global_vars.location):                
                 location = global_vars.location[obj_indx]
                 control_signal,error = pid.calculate_pos_pid(global_vars.center,location)
