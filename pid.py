@@ -7,6 +7,7 @@ class PID():
         self.Kd  = Kd
         self.pos_previous_error = 0.0
         self.pos_integral = 0.0
+        self.limit = 5.0
         pass
 
 
@@ -14,7 +15,7 @@ class PID():
         error = np.subtract(target_pos, now_position)
         self.pos_integral = np.add(self.pos_integral, error)
         derivative = np.subtract(error, self.pos_previous_error)
-        self.pos_integral =  np.clip(self.pos_integral, -5.0, 5.0)
+        self.pos_integral =  np.clip(self.pos_integral, -self.limit, self.limit)
         control_signal = np.multiply(self.Kp, error) + np.multiply(self.Ki, self.pos_integral) + np.multiply(self.Kd, derivative)
         self.pos_previous_error = error
         return control_signal / 100.0 ,error

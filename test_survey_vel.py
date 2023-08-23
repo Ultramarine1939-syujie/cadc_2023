@@ -109,11 +109,12 @@ def show_location():
         # print("Local Location: %s" % vehicle.location.local_frame)    #NED
         time.sleep(1)
 
+
 if __name__ == '__main__':
     #初始化
     drone_init()
     
-    pid = PID(Kp=0.1,Ki=0.001,Kd=0.0)
+    pid = PID(Kp=0.01, Ki=0.005, Kd=0.0)
     #起飞
     print("初始化完成,%s秒后飞行器自动起飞,目标高度：%s" % (DURATION,HEIGHT))
     time_count(DURATION)
