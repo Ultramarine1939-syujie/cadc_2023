@@ -66,19 +66,22 @@ def attack():
     start_time = time.time()
     while not (fire or global_vars.finish_task):
         time.sleep(0.05)
-        if  time.time() - start_time > 5:   # 30秒超时
+        if time.time() - start_time > 5:   # 5秒超时
             print("未识别到目标超时，跳过投弹返航")
             break
         if 61 in global_vars.img_type or 29 in global_vars.img_type:                      # 如果要识别的白桶在已经识别到的物品中, 桶子61,人0
             start_time = time.time()
             if 61 in global_vars.img_type:
                 obj_indx = global_vars.img_type.index(61)       # 找到识别的白桶的在已知物中的下标
+                print("桶子", end=" ")
             else:
                 obj_indx = global_vars.img_type.index(29)       # 找到识别的白桶的在已知物中的下标
+                print("飞盘", end=" ")
+
             if obj_indx < len(global_vars.location):                
                 location = global_vars.location[obj_indx]
-                control_signal,error = pid.calculate_pos_pid(global_vars.center,location)
-                print("当前控制速度",control_signal)
+                control_signal, error = pid.calculate_pos_pid(global_vars.center,location)
+                print("当前控制速度", control_signal)
                 # print("当前坐标：",location)
                 # print("当前误差：",error)
                 if abs(error[0]) < 50 and abs(error[1]) < 50:
@@ -92,7 +95,7 @@ def attack():
                         fire = True
                 else:
                     detect_num = 0
-                set_speed_on_time(-control_signal[0],-control_signal[1],0,1)
+                set_speed_on_time(-control_signal[0], -control_signal[1], 0, 1)
             global_vars.location = []
             global_vars.img_type = []
             pass
